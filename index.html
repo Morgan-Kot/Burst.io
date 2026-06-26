@@ -2,331 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bubble Popper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
     <style>
-        * { box-sizing: border-box; user-select: none; margin: 0; padding: 0; }
-        body { background-color: #1a1a1a; color: #fff; font-family: Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #game-container { position: relative; width: 360px; height: 640px; background-color: #111; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        canvas { display: block; width: 100%; height: 100%; }
-        
-        /* UI Overlays */
-        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #2c3e50; transition: opacity 0.3s; z-index: 10; }
-        .hidden { display: none !important; }
-        .hud { position: absolute; top: 0; left: 0; width: 100%; height: 40px; background-color: #111; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; font-size: 12px; font-weight: bold; z-index: 5; }
-        
-        /* Typography & Buttons */
-        h1 { font-size: 28px; margin-bottom: 10px; text-align: center; }
-        h2 { font-size: 20px; margin-bottom: 20px; color: #f1c40f; }
-        button { font-size: 16px; background-color: #34495e; color: #ecf0f1; border: none; padding: 12px 20px; margin: 8px 0; width: 200px; cursor: pointer; border-radius: 5px; }
-        button:active { background-color: #415b76; }
-        
-        /* Specific Screens */
-        #game-over-screen { background-color: #c0392b; }
-        #game-over-screen button { background-color: #e74c3c; }
+        /* Base text styling */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        /* Basic list cleanup */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        /* Making the a-tag look like a basic button */
+        .atag {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #000000;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+        }
+
+        /* Simple hover effect */
+        .atag:hover {
+            background-color: #e0e0e0;
+            border-color: #adadad;
+        }
+
+        /* Simple line separator adjustment */
+        hr {
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div id="hud" class="hud hidden">
-        <span id="hud-score">Score: 0</span>
-        <span id="hud-timer" style="color: #e74c3c;">Time: 2.5s</span>
-        <span id="hud-level">Lvl: 1 (0/10)</span>
-    </div>
+    <h2>Choose version:</h2>
 
-    <canvas id="game-canvas" width="360" height="640"></canvas>
-
-    <div id="menu-screen" class="screen">
-        <h1>BUBBLE POPPER</h1>
-        <h2 id="high-score-display">High Score: 0</h2>
-        <button onclick="startGame()">PLAY</button>
-        <button onclick="showScreen('settings-screen')">SETTINGS</button>
-    </div>
-
-    <div id="settings-screen" class="screen hidden">
-        <h1>SETTINGS</h1>
-        <button id="btn-audio" onclick="toggleAudio()" style="background-color: #2980b9;">AUDIO: ON</button>
-        <button id="btn-haptic" onclick="toggleHaptics()" style="background-color: #2980b9;">VIBRATION: ON</button>
-        <button id="btn-test" onclick="toggleTestMode()" style="background-color: #8e44ad;">TEST MODE: OFF</button>
-        <button onclick="showScreen('menu-screen')" style="background-color: #7f8c8d; margin-top: 30px;">BACK</button>
-    </div>
-
-    <div id="game-over-screen" class="screen hidden">
-        <h1>GAME OVER</h1>
-        <h2 id="new-high-score-msg" class="hidden" style="color: #f1c40f;">NEW HIGH SCORE!</h2>
-        <p id="final-score" style="font-size: 20px; margin-bottom: 10px;">Final Score: 0</p>
-        <p id="final-level" style="font-size: 16px; margin-bottom: 30px;">Level Reached: 1</p>
-        <button onclick="showScreen('menu-screen')">MENU</button>
-    </div>
-</div>
-
-<script>
-    // --- GAME CONFIGURATION ---
-    const CONFIG = {
-        STARTING_TIME: 2.5,
-        MIN_BUBBLE_SIZE: 36, // Scaled for 360px width
-        MAX_BUBBLE_SIZE: 48,
-        SPAWN_DELAY_MIN: 0.32,
-        SPAWN_DELAY_MAX: 1.2,
-        DOUBLE_SPAWN_ODDS: 20,
-        BUBBLE_LIFETIME_MS: 1800,
-        MAX_DIFFICULTY_LEVEL: 50,
-        SPEED_SCALING_FACTOR: 0.18,
-        VIBRATION_TIME_MS: 50,
-        TEST_MODE_MULTIPLIER: 3.0
-    };
-
-    // --- GLOBAL STATES ---
-    let state = {
-        audio: true,
-        haptics: true,
-        testMode: false,
-        highScore: localStorage.getItem("bubbleHighscore") || 0,
-        score: 0,
-        level: 1,
-        popsThisLevel: 0,
-        timeLeft: CONFIG.STARTING_TIME,
-        isRunning: false,
-        bubbles: [],
-        timers: []
-    };
-
-    const canvas = document.getElementById('game-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    // --- AUDIO CONTEXT (Synthesized Beep) ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playPopSound() {
-        if (!state.audio) return;
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.1);
-    }
-
-    // --- UI NAVIGATION ---
-    document.getElementById('high-score-display').innerText = `High Score: ${state.highScore}`;
-
-    function showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-        document.getElementById('hud').classList.add('hidden');
-        if(screenId) document.getElementById(screenId).classList.remove('hidden');
-    }
-
-    function toggleAudio() {
-        state.audio = !state.audio;
-        document.getElementById('btn-audio').innerText = `AUDIO: ${state.audio ? 'ON' : 'OFF'}`;
-    }
-
-    function toggleHaptics() {
-        state.haptics = !state.haptics;
-        document.getElementById('btn-haptic').innerText = `VIBRATION: ${state.haptics ? 'ON' : 'OFF'}`;
-    }
-
-    function toggleTestMode() {
-        state.testMode = !state.testMode;
-        document.getElementById('btn-test').innerText = `TEST MODE: ${state.testMode ? 'ON' : 'OFF'}`;
-    }
-
-    // --- GAME LOGIC ---
-    function startGame() {
-        state.score = 0;
-        state.level = 1;
-        state.popsThisLevel = 0;
-        state.timeLeft = CONFIG.STARTING_TIME;
-        state.isRunning = true;
-        state.bubbles = [];
+    <ul>
+        <li>
+            <a href="game.html" class="atag">Latest Version</a>
+        </li>
         
-        clearTimers();
-        updateHUD();
-        showScreen(''); 
-        document.getElementById('hud').classList.remove('hidden');
+        <hr>
         
-        gameLoop();
-        timerLoop();
-        render();
-    }
+        <li>
+            <a href="versions/o1_burst.html" class="atag">Version 1</a>
+        </li>
+    </ul>
 
-    function gameOver() {
-        state.isRunning = false;
-        clearTimers();
-        
-        if (state.score > state.highScore) {
-            state.highScore = state.score;
-            localStorage.setItem("bubbleHighscore", state.highScore);
-            document.getElementById('new-high-score-msg').classList.remove('hidden');
-        } else {
-            document.getElementById('new-high-score-msg').classList.add('hidden');
-        }
-        
-        document.getElementById('final-score').innerText = `Final Score: ${state.score}`;
-        document.getElementById('final-level').innerText = `Level Reached: ${state.level}`;
-        document.getElementById('high-score-display').innerText = `High Score: ${state.highScore}`;
-        
-        showScreen('game-over-screen');
-    }
-
-    function clearTimers() {
-        state.timers.forEach(t => clearTimeout(t));
-        state.timers = [];
-    }
-
-    function getRequiredPops() {
-        let effLvl = Math.min(state.level, CONFIG.MAX_DIFFICULTY_LEVEL);
-        return 10 + Math.floor((effLvl - 1) / 5);
-    }
-
-    function getSpawnSpeed() {
-        let effLvl = Math.min(state.level, CONFIG.MAX_DIFFICULTY_LEVEL);
-        let speedSteps = Math.floor((effLvl - 1) / 3);
-        let modifier = Math.pow(1 - CONFIG.SPEED_SCALING_FACTOR, speedSteps);
-        
-        let delay = (Math.random() * (CONFIG.SPAWN_DELAY_MAX - CONFIG.SPAWN_DELAY_MIN) + CONFIG.SPAWN_DELAY_MIN) * modifier;
-        if (state.testMode) delay *= CONFIG.TEST_MODE_MULTIPLIER;
-        return delay * 1000;
-    }
-
-    function checkOverlap(x, y, r) {
-        for (let b of state.bubbles) {
-            let dist = Math.sqrt(Math.pow(x - b.x, 2) + Math.pow(y - b.y, 2));
-            if (dist < (r + b.r + 10)) return true;
-        }
-        return false;
-    }
-
-    function gameLoop() {
-        if (!state.isRunning) return;
-        
-        let spawns = (Math.floor(Math.random() * CONFIG.DOUBLE_SPAWN_ODDS) === 0) ? 2 : 1;
-        
-        for (let s = 0; s < spawns; s++) {
-            for (let attempt = 0; attempt < 50; attempt++) {
-                let r = Math.random() * (CONFIG.MAX_BUBBLE_SIZE - CONFIG.MIN_BUBBLE_SIZE) + CONFIG.MIN_BUBBLE_SIZE;
-                let x = Math.random() * (canvas.width - r * 2) + r;
-                let y = Math.random() * (canvas.height - 40 - r * 2) + r + 40; // Avoid HUD
-                
-                if (!checkOverlap(x, y, r)) {
-                    createBubble(x, y, r);
-                    break;
-                }
-            }
-        }
-        
-        let delay = getSpawnSpeed();
-        state.timers.push(setTimeout(gameLoop, delay));
-    }
-
-    function createBubble(x, y, r) {
-        const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6", "#1abc9c"];
-        let color = colors[Math.floor(Math.random() * colors.length)];
-        
-        let bubble = { id: Math.random(), x, y, r, color, active: true };
-        state.bubbles.push(bubble);
-        
-        let effLvl = Math.min(state.level, CONFIG.MAX_DIFFICULTY_LEVEL);
-        let lifetimeMod = Math.pow(1 - CONFIG.SPEED_SCALING_FACTOR, Math.floor((effLvl - 1) / 3));
-        let lifetime = CONFIG.BUBBLE_LIFETIME_MS * lifetimeMod;
-        
-        if (state.testMode) lifetime *= CONFIG.TEST_MODE_MULTIPLIER;
-        
-        state.timers.push(setTimeout(() => {
-            bubble.active = false;
-        }, lifetime));
-    }
-
-    function timerLoop() {
-        if (!state.isRunning) return;
-        
-        let dec = 0.1;
-        if (state.testMode) dec /= CONFIG.TEST_MODE_MULTIPLIER;
-        
-        state.timeLeft -= dec;
-        
-        if (state.timeLeft <= 0) {
-            state.timeLeft = 0;
-            updateHUD();
-            gameOver();
-        } else {
-            updateHUD();
-            state.timers.push(setTimeout(timerLoop, 100));
-        }
-    }
-
-    function updateHUD() {
-        document.getElementById('hud-score').innerText = `Score: ${state.score}`;
-        document.getElementById('hud-timer').innerText = `Time: ${state.timeLeft.toFixed(1)}s`;
-        document.getElementById('hud-level').innerText = `Lvl: ${state.level} (${state.popsThisLevel}/${getRequiredPops()})`;
-    }
-
-    function render() {
-        if (!state.isRunning) return;
-        
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Remove inactive bubbles
-        state.bubbles = state.bubbles.filter(b => b.active);
-        
-        for (let b of state.bubbles) {
-            ctx.beginPath();
-            ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-            ctx.fillStyle = b.color;
-            ctx.fill();
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = "#ffffff";
-            ctx.stroke();
-            ctx.closePath();
-        }
-        
-        requestAnimationFrame(render);
-    }
-
-    // --- INTERACTION ---
-    canvas.addEventListener('pointerdown', (e) => {
-        if (!state.isRunning) return;
-        
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-        
-        // Check backwards to click the top-most bubble
-        for (let i = state.bubbles.length - 1; i >= 0; i--) {
-            let b = state.bubbles[i];
-            let dist = Math.sqrt(Math.pow(x - b.x, 2) + Math.pow(y - b.y, 2));
-            
-            if (dist <= b.r) {
-                b.active = false; // Pop it
-                
-                playPopSound();
-                if (state.haptics && "vibrate" in navigator) {
-                    navigator.vibrate(CONFIG.VIBRATION_TIME_MS);
-                }
-                
-                state.score++;
-                state.popsThisLevel++;
-                state.timeLeft = CONFIG.STARTING_TIME;
-                
-                if (state.popsThisLevel >= getRequiredPops()) {
-                    state.level++;
-                    state.popsThisLevel = 0;
-                }
-                
-                updateHUD();
-                break; // Only pop one per click
-            }
-        }
-    });
-
-</script>
 </body>
 </html>
