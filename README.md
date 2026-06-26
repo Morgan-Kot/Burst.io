@@ -1,21 +1,12 @@
-# Burst.io
-Burst.io - Pop bubbles
+# burst.io
+
+**Important:** By downloading the app or viewing this repository, you agree to the [Terms of Use](LICENSE). You may play and share the game, but copying or modifying the source code is strictly prohibited.
+
+## About the Project
+lorem ipsum...
+
+## How to Play
 
 
----
-Terms of Use & Copyright
-Copyright (c) 2026 Morgan Kot. All rights reserved.
-
-Hey! Thanks for checking out my project. Here are the simple rules for using it:
-
-What you CAN do:
-* Download and play the actual game/app for fun and entertainment.
-* Share it, stream it, talk about it, and advertise it to others. Please do!
-
-What you CANNOT do:
-* Copy, steal, or download the raw source code. It is visible here for review only.
-* Edit, modify, or hack the code to make your own versions of the game.
-* Take credit for my work. I am the sole creator.
-* Use the name "burst.io" for any other games or projects.
-
-Basically, enjoy playing and sharing the finished app, but leave the source code alone and don't steal my work or my game's name. Thanks for respecting the project!
+## Legal
+As stated in the license, this repository is open for visual review and educational purposes only. You are highly encouraged to share, stream, and advertise **burst.io**, but you may not copy the source code or use the name for other projects.
