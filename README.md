@@ -6,7 +6,8 @@
 lorem ipsum...
 
 ## How to Play
-
+Go to play.txt then find the "Press here to play" link and it will guide you there.
+When you are in, you just have to pop some bubbles
 
 ## Legal
 As stated in the license, this repository is open for visual review and educational purposes only. You are highly encouraged to share, stream, and advertise **burst.io**, but you may not copy the source code or use the name for other projects.
