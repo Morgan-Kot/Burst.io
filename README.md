@@ -6,7 +6,7 @@
 lorem ipsum...
 
 ## How to Play
-Go to play.txt then find the "Press here to play" link and it will guide you there.
+Go to play.md then find the "Press here to play" link and it will guide you there.
 When you are in, you just have to pop some bubbles
 
 ## Legal
