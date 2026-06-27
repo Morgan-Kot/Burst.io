@@ -17,6 +17,7 @@
         h1 { font-size: 32px; margin-bottom: 10px; text-align: center; letter-spacing: 2px; }
         h2 { font-size: 20px; margin-bottom: 5px; color: #f1c40f; }
         h3 { font-size: 16px; margin-bottom: 25px; color: #bdc3c7; font-weight: normal; }
+        p { font-size: 16px; margin-bottom: 12px; color: #ecf0f1; text-align: center; }
         button { font-size: 16px; background-color: #34495e; color: #ecf0f1; border: none; padding: 12px 20px; margin: 8px 0; width: 220px; cursor: pointer; }
         button:active { background-color: #415b76; }
         
@@ -42,6 +43,7 @@
         <h3 id="last-score-display">Last Score: 0</h3>
         <button onclick="startGame()">PLAY</button>
         <button onclick="showScreen('settings-screen')">SETTINGS</button>
+        <button onclick="showScreen('credits-screen')">CREDITS</button>
     </div>
 
     <div id="settings-screen" class="screen hidden">
@@ -51,6 +53,20 @@
         <button id="btn-junior" onclick="toggleJuniorMode()" style="background-color: #27ae60;">JUNIOR MODE: OFF</button>
         <button id="btn-test" onclick="toggleTestMode()" style="background-color: #8e44ad;">TEST MODE: OFF</button>
         <button onclick="showScreen('menu-screen')" style="background-color: #7f8c8d; margin-top: 30px;">BACK</button>
+    </div>
+
+    <div id="credits-screen" class="screen hidden">
+        <h1>CREDITS</h1>
+        <div style="margin-top: 20px; margin-bottom: 30px;">
+            <p><strong>Game:</strong> Burst.io</p>
+            <p><strong>Creator:</strong> Morgan Kot</p>
+            <p><strong>Engine:</strong> HTML5 Canvas API</p>
+            <p><strong>Version:</strong> v2.0-beta</p>
+            <p><strong>Build:</strong> e10000.0</p>
+            <p><strong>Date:</strong> June 27, 2026</p>
+            <p style="margin-top: 25px; font-size: 12px; color: #95a5a6;">Copyright &copy; 2026 Morgan Kot.<br>All rights reserved.</p>
+        </div>
+        <button onclick="showScreen('menu-screen')" style="background-color: #7f8c8d;">BACK</button>
     </div>
 
     <div id="game-over-screen" class="screen hidden">
