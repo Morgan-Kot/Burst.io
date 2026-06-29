@@ -220,11 +220,17 @@ function render() {
     for (let i = state.bubbles.length - 1; i >= 0; i--) {
         let b = state.bubbles[i];
         let elapsed = now - b.spawnTime;
+        let timeRemaining = b.lifetime - elapsed;
+        let shrinkWindow = 150; // Shrink in the last 150ms
         
         if (elapsed >= b.lifetime) {
             b.active = false;
+        } else if (timeRemaining <= shrinkWindow) {
+            // Quickly shrink from max radius to 0 over the last 150ms
+            b.currentR = b.maxR * (timeRemaining / shrinkWindow);
         } else {
-            b.currentR = b.maxR * (1 - (elapsed / b.lifetime));
+            // Keep the bubble at maximum size before the shrink window hits
+            b.currentR = b.maxR;
         }
     }
     
