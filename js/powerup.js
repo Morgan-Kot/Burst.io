@@ -5,7 +5,7 @@ function resolveBubbleProperties(x, y, r, isBomb, effLvl) {
         color = "#222222";
         type = "bomb";
     } else {
-        let colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6", "#1abc9c"];
+        let colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6", "#000000"];
         if (state.juniorMode) {
             colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#ff8800"];
         }
