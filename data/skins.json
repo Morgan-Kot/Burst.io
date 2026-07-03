@@ -1,0 +1,16 @@
+[
+  {
+    "id": "classic_default",
+    "name": "Classic Circle",
+    "cost": 0,
+    "imagePath": "",
+    "unlocked": true
+  },
+  {
+    "id": "football001",
+    "name": "Football",
+    "cost": 15,
+    "imagePath": "assets/skins/football.jpg",
+    "unlocked": false
+  }
+]
