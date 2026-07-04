@@ -319,12 +319,12 @@ canvas.addEventListener('pointerdown', (e) => {
     }
 });
 
-// This is for debugging and version control
-// DO NOT EDIT, DELETE, MOVE, ETC.
-console.log("debug-log")
-console.log("Build: e1.000.2")
-console.log("Changed: Nothing")
-console.log("Developer note: Nothing")
+//debugging and version control
+//every change made in this file has to be documented in the changelog
+console.log("-- game.js changelog --")
+console.log("Changed: nothing")
+console.log("Developer notes: nothing")
+
 
 
 
