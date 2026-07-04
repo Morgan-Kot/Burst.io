@@ -16,14 +16,14 @@
   {
     "id": "rainbow001",
     "name": "rainbow_skin",
-    "cost": 25, 
+    "cost": 30, 
     "imagePath": "assets/skins/rainbow_skin.png",
     "unlocked": false
   },
   {
     "id": "face001",
     "name": "face_skin",
-    "cost": 30, 
+    "cost": 50, 
     "imagePath": "assets/skins/face_skin.png",
     "unlocked": false
   },
