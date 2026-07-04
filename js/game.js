@@ -320,5 +320,20 @@ canvas.addEventListener('pointerdown', (e) => {
 });
 
 // This is for debugging and version control
-console.log("v2.1.1")
-console.log("e1.000.1")
+// DO NOT EDIT, DELETE, MOVE, ETC.
+console.log("debug-log")
+console.log("Build: e1.000.2")
+console.log("Changed: Nothing")
+console.log("Developer note: Nothing")
+
+
+
+
+
+
+
+
+
+
+
+
