@@ -7,7 +7,7 @@
     DOUBLE_SPAWN_ODDS: 20,
     BUBBLE_LIFETIME_MS: 1800, 
     MAX_DIFFICULTY_LEVEL: 25,
-    SPEED_SCALING_FACTOR: 0.99, //0.18 default
+    SPEED_SCALING_FACTOR: 0.30, //0.18 default
     POPCOIN_LEVEL_INTERVAL: 1,
     POPCOIN_BASE_PAYOUT: 2,
     VIBRATION_PATTERN: [45, 60, 20],
@@ -50,5 +50,5 @@ const container = document.getElementById('game-container');
 //debugging and version control
 //every change made in this file has to be documented in the changelog
 console.log("-- Variables.js changelog --")
-console.log("Changed: bomb_odds changed from 13 to 17.")
+console.log("Changed: changed SFS from 99% to 30%")
 console.log("Developer notes: base popcoins payout has been increased from 1 to 2.")
