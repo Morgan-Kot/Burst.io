@@ -5,9 +5,11 @@
     SPAWN_DELAY_MIN: 0.32,
     SPAWN_DELAY_MAX: 1,
     DOUBLE_SPAWN_ODDS: 20,
-    BUBBLE_LIFETIME_MS: 2000, 
+    BUBBLE_LIFETIME_MS: 2000, 
+
     MAX_DIFFICULTY_LEVEL: 25,
-    SPEED_SCALING_FACTOR: 0.07,
+    SPEED_SCALING_FACTOR: 0.07,
+
     POPCOIN_LEVEL_INTERVAL: 1,
     POPCOIN_BASE_PAYOUT: 2,
 
@@ -46,3 +48,10 @@ const Modes = {};
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 const container = document.getElementById('game-container');
+
+
+//debugging and version control
+//every change made in this file has to be documented in the changelog
+console.log("-- Variables.js changelog --")
+console.log("Changed: nothing")
+console.log("Developer notes: nothing")
