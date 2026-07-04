@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: '.'
+          path: './Burst.io-f9680967de05bdf42323924540e0d88e3f379daa'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
