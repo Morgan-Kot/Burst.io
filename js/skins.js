@@ -17,7 +17,6 @@ async function initShop() {
     }
 }
 
-// Shop UI Fix Version: v2.0 | Modified DOM injection structure to output grid cards matching layout requirements.
 function renderShop(skinsData) {
     document.getElementById('shop-balance').innerText = `Popcoins: ${state.popcoins}`;
     const container = document.getElementById('shop-items-container');
@@ -29,8 +28,6 @@ function renderShop(skinsData) {
         
         const itemEl = document.createElement('div');
         itemEl.className = `shop-item ${isEquipped ? 'equipped' : ''}`;
-        
-        // Use a colored circle for the default item, or an image element if an imagePath exists
         const previewHTML = skin.imagePath ? 
             `<img src="${skin.imagePath}" alt="${skin.name}">` : 
             `<div class="shop-circle-preview" style="background: #5e2ced;"></div>`;
@@ -80,3 +77,9 @@ showScreen = function(screenId) {
 };
 
 initShop();
+
+//debugging and version control
+//every change made in this file has to be documented in the changelog
+console.log("-- skins.js changelog --")
+console.log("Changed: nothing")
+console.log("Developer notes: nothing")
