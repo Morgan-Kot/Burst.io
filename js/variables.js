@@ -14,9 +14,9 @@ const CONFIG = {
     BOMB_VIBRATION: [200, 100, 200, 100, 200],
     BOMB_ODDS: 17,
     BOMB_PENALTY: 10,
-    coins_flytime: 4000, 
+    coins_flytime: 40000, 
     coin_value: 1,
-    coin_size: 28
+    coin_size: 40
 };
 
 let state = {
