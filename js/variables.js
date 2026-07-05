@@ -16,7 +16,7 @@ const CONFIG = {
     BOMB_PENALTY: 10,
     coins_flytime: 40000, 
     coin_value: 1,
-    coin_size: 40
+    coin_size: 120
 };
 
 let state = {
@@ -50,4 +50,5 @@ const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 const container = document.getElementById('game-container');
 
+console.log("UPDATED COIN SIZE")
 // Variables.js Version: v1.1 | ADDED_FLYING_POPCOIN_VARIABLES_AND_IMAGE_PRELOADER
