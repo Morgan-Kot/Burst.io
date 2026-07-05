@@ -1,4 +1,3 @@
-﻿// --- NORMAL MODE REGISTRY ---
 Modes.normal = {
     spawnDelayMult: 1.0,
     lifetimeMult: 1.0,
@@ -10,7 +9,6 @@ Modes.normal = {
     colors: ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6", "#ecf0f1"]
 };
 
-// --- CORE ENGINE ---
 function resizeCanvas() {
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
@@ -46,6 +44,7 @@ function startGame(mode = 'normal') {
     state.isRunning = true;
     state.bubbles = [];
     state.particles = [];
+    state.coins = [];
     
     clearTimers();
     updateHUD();
@@ -108,6 +107,53 @@ function checkOverlap(x, y, r) {
     return false;
 }
 
+// spawnCoin Version: v1.0 | Added random edge coin spawning with custom zig-zag trajectory and life duration variance.
+function spawnCoin() {
+    let edge = Math.floor(Math.random() * 4);
+    let x, y, vx, vy;
+    let speed = 2.5 * (canvas.width / 360);
+    
+    if (edge === 0) {
+        x = Math.random() * canvas.width;
+        y = -CONFIG.coin_size;
+        vx = (Math.random() - 0.5) * speed;
+        vy = speed;
+    } else if (edge === 1) {
+        x = canvas.width + CONFIG.coin_size;
+        y = Math.random() * canvas.height;
+        vx = -speed;
+        vy = (Math.random() - 0.5) * speed;
+    } else if (edge === 2) {
+        x = Math.random() * canvas.width;
+        y = canvas.height + CONFIG.coin_size;
+        vx = (Math.random() - 0.5) * speed;
+        vy = -speed;
+    } else {
+        x = -CONFIG.coin_size;
+        y = Math.random() * canvas.height;
+        vx = speed;
+        vy = (Math.random() - 0.5) * speed;
+    }
+    
+    let variance = (Math.random() * 0.4) - 0.2;
+    let lifetime = CONFIG.coins_flytime * (1 + variance);
+    
+    state.coins.push({
+        x: x,
+        y: y,
+        baseX: x,
+        baseY: y,
+        vx: vx,
+        vy: vy,
+        spawnTime: Date.now(),
+        lifetime: lifetime,
+        active: true,
+        wobbleSpeed: 0.006 + Math.random() * 0.004,
+        wobbleSize: 20 + Math.random() * 30
+    });
+}
+
+// gameLoop Version: v1.1 | Added regular randomized triggers to instantiate the new flying coins during gameplay.
 function gameLoop() {
     if (!state.isRunning) return;
     
@@ -135,6 +181,10 @@ function gameLoop() {
                 break;
             }
         }
+    }
+    
+    if (Math.random() < 0.15) {
+        spawnCoin();
     }
     
     let delay = getSpawnSpeed();
@@ -180,6 +230,7 @@ function updateHUD() {
     document.getElementById('hud-level').innerText = `Lvl: ${state.level} (${state.popsThisLevel}/${getRequiredPops()})`;
 }
 
+// render Version: v1.1 | Modified rendering pipeline to compute coin trajectories and draw preloaded asset graphics.
 function render() {
     if (!state.isRunning) return;
     
@@ -240,6 +291,43 @@ function render() {
         }
     }
 
+    for (let c of state.coins) {
+        let elapsed = now - c.spawnTime;
+        if (elapsed >= c.lifetime) {
+            c.active = false;
+            continue;
+        }
+        
+        c.baseX += c.vx;
+        c.baseY += c.vy;
+        
+        let perpX = -c.vy;
+        let perpY = c.vx;
+        let len = Math.sqrt(perpX * perpX + perpY * perpY);
+        if (len > 0) {
+            perpX /= len;
+            perpY /= len;
+        }
+        
+        let wobble = Math.sin(elapsed * c.wobbleSpeed) * c.wobbleSize;
+        c.x = c.baseX + perpX * wobble;
+        c.y = c.baseY + perpY * wobble;
+        
+        if (coinImage.complete) {
+            ctx.drawImage(coinImage, c.x - CONFIG.coin_size / 2, c.y - CONFIG.coin_size / 2, CONFIG.coin_size, CONFIG.coin_size);
+        } else {
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, CONFIG.coin_size / 2, 0, Math.PI * 2);
+            ctx.fillStyle = "#f1c40f";
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#ffffff";
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+    state.coins = state.coins.filter(c => c.active);
+
     let screenScale = canvas.width / 360;
     for (let i = state.particles.length - 1; i >= 0; i--) {
         let p = state.particles[i];
@@ -264,6 +352,7 @@ function render() {
     requestAnimationFrame(render);
 }
 
+// pointerdown Event Listener Version: v1.1 | Removed auto-level payout and added top-priority click intersection checking for active coins.
 canvas.addEventListener('pointerdown', (e) => {
     if (!state.isRunning) return;
     
@@ -272,6 +361,20 @@ canvas.addEventListener('pointerdown', (e) => {
     const scaleY = canvas.height / rect.height;
     const x = (e.clientX - rect.left) * scaleX;
     const y = (e.clientY - rect.top) * scaleY;
+    
+    for (let i = state.coins.length - 1; i >= 0; i--) {
+        let c = state.coins[i];
+        let dist = Math.sqrt(Math.pow(x - c.x, 2) + Math.pow(y - c.y, 2));
+        
+        if (dist <= CONFIG.coin_size && c.active) {
+            c.active = false;
+            state.popcoins += CONFIG.coin_value;
+            localStorage.setItem("burstPopcoins", state.popcoins);
+            playPopSound();
+            updateHUD();
+            return;
+        }
+    }
     
     for (let i = state.bubbles.length - 1; i >= 0; i--) {
         let b = state.bubbles[i];
@@ -300,16 +403,6 @@ canvas.addEventListener('pointerdown', (e) => {
                 if (state.popsThisLevel >= getRequiredPops()) {
                     state.level++;
                     state.popsThisLevel = 0;
-
-                    // Dynamically calculates payout using your new CONFIG variables
-                    if (state.level % CONFIG.POPCOIN_LEVEL_INTERVAL === 0) {
-                        let basePayout = CONFIG.POPCOIN_BASE_PAYOUT;
-                        if (state.level > 25) basePayout *= 2;
-                        if (state.currentMode === 'chaos') basePayout *= 3;
-                        
-                        state.popcoins += basePayout;
-                        localStorage.setItem("burstPopcoins", state.popcoins);
-                    }
                 }
             }
             
@@ -324,13 +417,6 @@ canvas.addEventListener('pointerdown', (e) => {
 console.log("-- game.js changelog --")
 console.log("Changed: nothing")
 console.log("Developer notes: nothing")
-
-
-
-
-
-
-
 
 
 
