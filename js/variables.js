@@ -1,11 +1,11 @@
 const CONFIG = {
-    STARTING_TIME: 2.5,
+    STARTING_TIME: 3,
     MIN_BUBBLE_SIZE: 36,
     MAX_BUBBLE_SIZE: 68,
     SPAWN_DELAY_MIN: 0.32,
-    SPAWN_DELAY_MAX: 1,
+    SPAWN_DELAY_MAX: 0.94,
     DOUBLE_SPAWN_ODDS: 20,
-    BUBBLE_LIFETIME_MS: 1800, //1800
+    BUBBLE_LIFETIME_MS: 2100, //1800
     MAX_DIFFICULTY_LEVEL: 25,
     SPEED_SCALING_FACTOR: 0.15,//0.30 
     POPCOIN_LEVEL_INTERVAL: 5,
@@ -14,9 +14,9 @@ const CONFIG = {
     BOMB_VIBRATION: [200, 100, 200, 100, 200],
     BOMB_ODDS: 17,
     BOMB_PENALTY: 10,
-    coins_flytime: 40000, 
+    coins_flytime: 4000, 
     coin_value: 1,
-    coin_size: 120
+    coin_size: 1200
 };
 
 let state = {
